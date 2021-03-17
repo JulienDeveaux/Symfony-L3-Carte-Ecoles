@@ -2,6 +2,7 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Etablissements;
@@ -40,9 +41,6 @@ class EtablissementsController extends AbstractController
 
 
     return new Response ($html);
-    return new Response(
-      "<html><body><h1><a href='/etablissements/departement/12860'>page départements 1</a></h1></body></html>"
-    );
   }
 
   /**
@@ -82,14 +80,39 @@ class EtablissementsController extends AbstractController
   }
 
   /**
-   * @Route("/etablissements/Academie/{id}")
+   * @Route("/")
    */
-  public function afficheAcademie($id): Response
+  public function index(): RedirectResponse
   {
-  	$item = $this->getDoctrine()->getRepository(Etablissements::class)->find($id);
-  	if(!$item) {
-  		return new Response("Non trouvé");
-  	}
-  	return new Response("<p>Code postal : ".$item->getCodePostal()." </br>code département : ".$item->getCodeDepartement()." </br>Appelation officielle : ".$item->getAppelationOfficielle()." </br>Lieu dit : ".$item->getLieuDit()." </br>Localite : ".$item->getLocalite()." </br>Académie : ".$item->getLibelleAcademie()."</p>");
+      return $this->redirectToRoute("/etablissements");
   }
+    /**
+     * @Route("/etablissements/academie/{codeAcademie}")
+     */
+
+    public function afficheAcademie($codeAcademie) : Response
+    {
+        $item = $this->getDoctrine()
+            ->getRepository(Etablissements::class)
+            ->find($codeAcademie);
+        if(!$item) {
+            return new Response("Non trouvé");
+        }
+        return new Response("<p>Code postal : "
+            .$item->getCodePostal()
+            ." </br>code département : "
+            .$item->getCodeDepartement()
+            ." </br>Appelation officielle : "
+            .$item->getAppelationOfficielle()
+            ." </br>Lieu dit : "
+            .$item->getLieuDit()
+            ." </br>Localite : "
+            .$item->getLocalite()
+            ." </br>Académie : "
+            .$item->getLibelleAcademie()
+            ."</p>");
+
+    }
+
+
 }
