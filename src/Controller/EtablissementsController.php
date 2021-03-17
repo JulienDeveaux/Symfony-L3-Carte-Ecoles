@@ -20,27 +20,32 @@ class EtablissementsController extends AbstractController
     $nomColonnesFait = false;
 
     for($i = 12860; $i < 12901; $i++) {
-  		$item = $this->getDoctrine()->getRepository(Etablissements::class)->find($i);
-        if(!$nomColonnesFait){
-            $html .= "<tr>";
-            $html .= "<th>Département</th>";
-            $html .= "<th>Région</th>";
-            $html .= "<th>Commune</th>";
-            $html .= "<th>Académie</th>";
-            $nomColonnesFait = true;
-        }
-
+      $item = $this->getDoctrine()->getRepository(Etablissements::class)->find($i);
+      while(!$item) {
+        $i = $i + 1;
+        $item = $this->getDoctrine()->getRepository(Etablissements::class)->find($i);
+      }
+      if(!$nomColonnesFait){
         $html .= "<tr>";
-        $html .= "<td><a href='/etablissements/departement/".$item->getid()."'>".$item->getLibelleDepartement()."</a></td>";
-        $html .= "<td><a href='/etablissements/Region/".$item->getid()."'>".$item->getLibelleRegion()."</a></td>";
-        $html .= "<td><a href='/etablissements/Commune/".$item->getid()."'>".$item->getCodeCommune()."</a></td>";
-        $html .= "<td><a href='/etablissements/Academie/".$item->getid()."'>".$item->getLibelleAcademie()."</a></td>";
-        $html .= '</tr>';
+        $html .= "<th>Département</th>";
+        $html .= "<th>Région</th>";
+        $html .= "<th>Commune</th>";
+        $html .= "<th>Académie</th>";
+        $nomColonnesFait = true;
+      }
+
+      $html .= "<tr>";
+      $html .= "<td><a href='/etablissements/departement/".$item->getid()."'>".$item->getLibelleDepartement()."</a></td>";
+      $html .= "<td><a href='/etablissements/Region/".$item->getid()."'>".$item->getLibelleRegion()."</a></td>";
+      $html .= "<td><a href='/etablissements/Commune/".$item->getid()."'>".$item->getCodeCommune()."</a></td>";
+      $html .= "<td><a href='/etablissements/Academie/".$item->getid()."'>".$item->getLibelleAcademie()."</a></td>";
+      $html .= '</tr>';
     }
     $html .= "</table>";
 
 
-    return new Response ($html);
+    return $this->render('etablissementsController.html.twig', ['tableau' => $html, 'nom' => 'Liste des catégories', 'texte' => '']);
+
   }
 
   /**
@@ -48,11 +53,58 @@ class EtablissementsController extends AbstractController
    */
   public function afficheDepartement($id): Response
   {
-  	$item = $this->getDoctrine()->getRepository(Etablissements::class)->find($id);
-  	if(!$item) {
-  		return new Response("Non trouvé");
-  	}
-  	return new Response("<p>Code postal : ".$item->getCodePostal()." </br>code département : ".$item->getCodeDepartement()." </br>Appelation officielle : ".$item->getAppelationOfficielle()." </br>Lieu dit : ".$item->getLieuDit()." </br>Localite : ".$item->getLocalite()." </br>Académie : ".$item->getLibelleAcademie()."</p>");
+    $item = $this
+    ->getDoctrine()
+    ->getRepository(Etablissements::class)
+    ->find($id);
+
+    $html = "<p>Departement : "
+    .$item->getLibelleDepartement()
+    ." </br> Code département : "
+    .$item->getCodeDepartement()
+    ." </br> Code ministère : "
+    .$item->getCodeMinistere()
+    ." </br> Nom ministère : "
+    .$item->getLibelleMinistere()
+    ."</p>";
+
+    if(!$item) {
+      return new Response("Non trouvé");
+    }
+
+    $departement = $this
+    ->getDoctrine()
+    ->getRepository(Etablissements::class)
+    ->findBy(array('libelle_departement' => $item->getLibelleDepartement()));
+
+    $tableau = "";
+    $tableau .= "<table>";
+    $nomColonnesFait = false;
+
+    for($i = 0; $i < sizeof($departement); $i++) {
+      if(!$nomColonnesFait){
+        $tableau .= "<tr>";
+        $tableau .= "<th>Etablissement</th>";
+        $tableau .= "<th>Type</th>";
+        $tableau .= "<th>Date d'ouverture</th>";
+        $tableau .= "<th>Commune</th>";
+        $tableau .= "<th>Académie</th>";
+        $tableau .= "<th>Privé / Public</th>";
+        $nomColonnesFait = true;
+      }
+
+      $tableau .= "<tr>";
+      $tableau .= "<td>".$departement[$i]->getAppelationOfficielle()."</td>";
+      $tableau .= "<td>".$departement[$i]->getDenominationPrincipale()."</td>";
+      $tableau .= "<td>".$departement[$i]->getDateOuverture()."</td>";
+      $tableau .= "<td>".$departement[$i]->getCodeCommune()."</td>";
+      $tableau .= "<td>".$departement[$i]->getLibelleAcademie()."</td>";
+      $tableau .= "<td>".$departement[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= '</tr>';
+    }
+    $tableau .= "</table>";
+
+    return $this->render('etablissementsController.html.twig', ['tableau' => $tableau, 'nom' => 'Départements', 'texte' => $html]);
   }
 
   /**
@@ -64,7 +116,46 @@ class EtablissementsController extends AbstractController
   	if(!$item) {
   		return new Response("Non trouvé");
   	}
-  	return new Response("<p>Code postal : ".$item->getCodePostal()." </br>code département : ".$item->getCodeDepartement()." </br>Appelation officielle : ".$item->getAppelationOfficielle()." </br>Lieu dit : ".$item->getLieuDit()." </br>Localite : ".$item->getLocalite()." </br>Académie : ".$item->getLibelleAcademie()."</p>");
+
+    $region = $this
+    ->getDoctrine()
+    ->getRepository(Etablissements::class)
+    ->findBy(array('libelle_region' => $item->getLibelleRegion()));
+
+    $html = "<p>Code postal : ".$item->getCodePostal()
+    ." </br>code region : ".$item->getCodeRegion()
+    ." </br>Lieu dit : ".$item->getLieuDit()
+    ." </br>Localite : ".$item->getLocalite()
+    ." </br>Académie : ".$item->getLibelleAcademie()."</p>";
+
+    $tableau = "";
+    $tableau .= "<table>";
+    $nomColonnesFait = false;
+
+    for($i = 0; $i < sizeof($region); $i++) {
+      if(!$nomColonnesFait){
+        $tableau .= "<tr>";
+        $tableau .= "<th>Etablissement</th>";
+        $tableau .= "<th>Type</th>";
+        $tableau .= "<th>Date d'ouverture</th>";
+        $tableau .= "<th>Commune</th>";
+        $tableau .= "<th>Académie</th>";
+        $tableau .= "<th>Privé / Public</th>";
+        $nomColonnesFait = true;
+      }
+
+      $tableau .= "<tr>";
+      $tableau .= "<td>".$region[$i]->getAppelationOfficielle()."</td>";
+      $tableau .= "<td>".$region[$i]->getDenominationPrincipale()."</td>";
+      $tableau .= "<td>".$region[$i]->getDateOuverture()."</td>";
+      $tableau .= "<td>".$region[$i]->getCodeCommune()."</td>";
+      $tableau .= "<td>".$region[$i]->getLibelleAcademie()."</td>";
+      $tableau .= "<td>".$region[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= '</tr>';
+    }
+    $tableau .= "</table>";
+
+  	return $this->render('etablissementsController.html.twig', ['tableau' => $tableau, 'nom' => 'Régions', 'texte' => $html]);
   }
 
   /**
@@ -76,7 +167,110 @@ class EtablissementsController extends AbstractController
   	if(!$item) {
   		return new Response("Non trouvé");
   	}
-  	return new Response("<p>Code postal : ".$item->getCodePostal()." </br>code département : ".$item->getCodeDepartement()." </br>Appelation officielle : ".$item->getAppelationOfficielle()." </br>Lieu dit : ".$item->getLieuDit()." </br>Localite : ".$item->getLocalite()." </br>Académie : ".$item->getLibelleAcademie()."</p>");
+
+    $commune = $this
+    ->getDoctrine()
+    ->getRepository(Etablissements::class)
+    ->findBy(array('code_commune' => $item->getCodeCommune()));
+
+    $html = "<p>Code postal : ".$item->getCodePostal()
+    ." </br>code département : ".$item->getCodeDepartement()
+    ." </br>Appelation officielle : ".$item->getAppelationOfficielle()
+    ." </br>Lieu dit : ".$item->getLieuDit()
+    ." </br>Localite : ".$item->getLocalite()
+    ." </br>Académie : ".$item->getLibelleAcademie()."</p>";
+
+    $tableau = "";
+    $tableau .= "<table>";
+    $nomColonnesFait = false;
+
+    for($i = 0; $i < sizeof($commune); $i++) {
+      if(!$nomColonnesFait){
+        $tableau .= "<tr>";
+        $tableau .= "<th>Etablissement</th>";
+        $tableau .= "<th>Type</th>";
+        $tableau .= "<th>Date d'ouverture</th>";
+        $tableau .= "<th>Commune</th>";
+        $tableau .= "<th>Académie</th>";
+        $tableau .= "<th>Privé / Public</th>";
+        $nomColonnesFait = true;
+      }
+
+      $tableau .= "<tr>";
+      $tableau .= "<td>".$commune[$i]->getAppelationOfficielle()."</td>";
+      $tableau .= "<td>".$commune[$i]->getDenominationPrincipale()."</td>";
+      $tableau .= "<td>".$commune[$i]->getDateOuverture()."</td>";
+      $tableau .= "<td>".$commune[$i]->getCodeCommune()."</td>";
+      $tableau .= "<td>".$commune[$i]->getLibelleAcademie()."</td>";
+      $tableau .= "<td>".$commune[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= '</tr>';
+    }
+    $tableau .= "</table>";
+
+  	return $this->render('etablissementsController.html.twig', ['tableau' => $tableau, 'nom' => 'Communes', 'texte' => $html]);
+  }
+
+  /**
+   * @Route("/etablissements/Academie/{codeAcademie}")
+   */
+
+  public function afficheAcademie($codeAcademie) : Response
+  {
+    $item = $this->getDoctrine()
+    ->getRepository(Etablissements::class)
+    ->find($codeAcademie);
+
+    if(!$item) {
+      return new Response("Non trouvé");
+    }
+
+    $academie = $this
+    ->getDoctrine()
+    ->getRepository(Etablissements::class)
+    ->findBy(array('libelle_academie' => $item->getLibelleAcademie()));
+
+    $html = "<p>Code postal : "
+      .$item->getCodePostal()
+      ." </br>code département : "
+      .$item->getCodeDepartement()
+      ." </br>Appelation officielle : "
+      .$item->getAppelationOfficielle()
+      ." </br>Lieu dit : "
+      .$item->getLieuDit()
+      ." </br>Localite : "
+      .$item->getLocalite()
+      ." </br>Académie : "
+      .$item->getLibelleAcademie()
+      ."</p>";
+
+    $tableau = "";
+    $tableau .= "<table>";
+    $nomColonnesFait = false;
+
+    for($i = 0; $i < sizeof($academie); $i++) {
+      if(!$nomColonnesFait){
+        $tableau .= "<tr>";
+        $tableau .= "<th>Etablissement</th>";
+        $tableau .= "<th>Type</th>";
+        $tableau .= "<th>Date d'ouverture</th>";
+        $tableau .= "<th>Commune</th>";
+        $tableau .= "<th>Académie</th>";
+        $tableau .= "<th>Privé / Public</th>";
+        $nomColonnesFait = true;
+      }
+
+      $tableau .= "<tr>";
+      $tableau .= "<td>".$academie[$i]->getAppelationOfficielle()."</td>";
+      $tableau .= "<td>".$academie[$i]->getDenominationPrincipale()."</td>";
+      $tableau .= "<td>".$academie[$i]->getDateOuverture()."</td>";
+      $tableau .= "<td>".$academie[$i]->getCodeCommune()."</td>";
+      $tableau .= "<td>".$academie[$i]->getLibelleAcademie()."</td>";
+      $tableau .= "<td>".$academie[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= '</tr>';
+    }
+    $tableau .= "</table>";
+
+    return $this->render('etablissementsController.html.twig', ['tableau' => $tableau, 'nom' => 'Académie', 'texte' => $html]);
   }
 
   /**
@@ -84,35 +278,39 @@ class EtablissementsController extends AbstractController
    */
   public function index(): RedirectResponse
   {
-      return $this->redirectToRoute("/etablissements");
+    return $this->redirectToRoute("/etablissements");
   }
-    /**
-     * @Route("/etablissements/academie/{codeAcademie}")
-     */
 
-    public function afficheAcademie($codeAcademie) : Response
-    {
-        $item = $this->getDoctrine()
-            ->getRepository(Etablissements::class)
-            ->find($codeAcademie);
-        if(!$item) {
-            return new Response("Non trouvé");
-        }
-        return new Response("<p>Code postal : "
-            .$item->getCodePostal()
-            ." </br>code département : "
-            .$item->getCodeDepartement()
-            ." </br>Appelation officielle : "
-            .$item->getAppelationOfficielle()
-            ." </br>Lieu dit : "
-            .$item->getLieuDit()
-            ." </br>Localite : "
-            .$item->getLocalite()
-            ." </br>Académie : "
-            .$item->getLibelleAcademie()
-            ."</p>");
+  /**
+   * @Route("/test")
+   */
 
+  public function afficheTest() : Response
+  {
+    $html = "";
+      //$html .= "<table>";
+    $nomColonnesFait = false;
+
+    for($i = 12860; $i < 12901; $i++) {
+      if(!$nomColonnesFait){
+        $html .= "<tr>";
+        $html .= "<th>Département</th>";
+        $html .= "<th>Région</th>";
+        $html .= "<th>Commune</th>";
+        $html .= "<th>Académie</th>";
+        $nomColonnesFait = true;
+      }
+
+      $html .= "<tr>";
+      $html .= "<td>test</td>";
+      $html .= "<td>test</td>";
+      $html .= "<td>test</td>";
+      $html .= "<td>test</td>";
+      $html .= '</tr>';
     }
+      //$html .= "</table>";
 
 
+    return new Response ($html);
+  }
 }
