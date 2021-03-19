@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -273,13 +274,13 @@ class EtablissementsController extends AbstractController
     return $this->render('etablissementsController.html.twig', ['tableau' => $tableau, 'nom' => 'Académie', 'texte' => $html]);
   }
 
-  /**
-   * @Route("/")
-   */
-  public function index(): RedirectResponse
-  {
-    return $this->redirectToRoute("/etablissements");
-  }
+    /**
+     * @Route("/")
+     */
+    public function index(): Response
+    {
+        return new Response ("<meta http-equiv='refresh' content='0; URL=/etablissements'>");
+    }
 
   /**
    * @Route("/test")
