@@ -40,14 +40,9 @@ class Commentaires
     private $texte;
 
     /**
-     * @ORM\OneToMany(targetEntity=Etablissements::class, mappedBy="commentaire")
+     * @ORM\ManyToOne(targetEntity=Etablissements::class, inversedBy="commentaires")
      */
-    private $etablissements;
-
-    public function __construct()
-    {
-        $this->etablissements = new ArrayCollection();
-    }
+    private $etablissement;
 
     public function getId(): ?int
     {
@@ -102,32 +97,14 @@ class Commentaires
         return $this;
     }
 
-    /**
-     * @return Collection|Etablissements[]
-     */
-    public function getEtablissements(): Collection
+    public function getEtablissement(): ?Etablissements
     {
-        return $this->etablissements;
+        return $this->etablissement;
     }
 
-    public function addEtablissement(Etablissements $etablissement): self
+    public function setEtablissement(?Etablissements $etablissement): self
     {
-        if (!$this->etablissements->contains($etablissement)) {
-            $this->etablissements[] = $etablissement;
-            $etablissement->setCommentaire($this);
-        }
-
-        return $this;
-    }
-
-    public function removeEtablissement(Etablissements $etablissement): self
-    {
-        if ($this->etablissements->removeElement($etablissement)) {
-            // set the owning side to null (unless already changed)
-            if ($etablissement->getCommentaire() === $this) {
-                $etablissement->setCommentaire(null);
-            }
-        }
+        $this->etablissement = $etablissement;
 
         return $this;
     }

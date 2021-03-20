@@ -2,9 +2,11 @@
 
 namespace App\DataFixtures;
 
+use DateTime;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Etablissements;
+use App\Entity\Commentaires;
 
 class EtablissementsFixtures extends Fixture
 {
@@ -51,9 +53,20 @@ class EtablissementsFixtures extends Fixture
         		$etablissements->setLibelleMinistere($line[32]);
         		$etablissements->setDateOuverture((int)$line[33]);
 
+                $commentaire = new Commentaires();
+                $commentaire->setNom("Ceci est un nom automatique " . $i);
+                $adj = getdate();
+                $date = new dateTime();
+                $commentaire->setDateCreation($date);
+                $commentaire->setNote(3);
+                $commentaire->setTexte("Ceci est un commentaire automatique " . $i);
+                $manager->persist($commentaire);
+                $etablissements->addCommentaire($commentaire);
+
         		$manager->persist($etablissements);
-        		if($i % 10000 == 0) {
+        		if($i % 20000 == 0) {
         			$manager->flush();
+                    break;
         		}
         	}
         	$i = $i + 1;

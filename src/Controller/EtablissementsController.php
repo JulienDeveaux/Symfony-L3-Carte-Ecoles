@@ -1,12 +1,13 @@
 <?php
 namespace App\Controller;
 
-use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Etablissements;
+use App\Entity\Commentaires;
+
 
 
 class EtablissementsController extends AbstractController
@@ -20,12 +21,26 @@ class EtablissementsController extends AbstractController
   	$html .= "<table>";
     $nomColonnesFait = false;
 
-    for($i = 12860; $i < 12901; $i++) {
+    $maxId = $this
+    ->getDoctrine()
+    ->getManager()
+    ->createQueryBuilder()
+    ->select('MAX(e.id)')
+    ->from('App:Etablissements', 'e')
+    ->getQuery()
+    ->getSingleScalarResult();
+
+    $minId = $this
+    ->getDoctrine()
+    ->getManager()
+    ->createQueryBuilder()
+    ->select('MIN(e.id)')
+    ->from('App:Etablissements', 'e')
+    ->getQuery()
+    ->getSingleScalarResult();
+
+    for($i = $minId; $i < $maxId; $i++) {
       $item = $this->getDoctrine()->getRepository(Etablissements::class)->find($i);
-      while(!$item) {
-        $i = $i + 1;
-        $item = $this->getDoctrine()->getRepository(Etablissements::class)->find($i);
-      }
       if(!$nomColonnesFait){
         $html .= "<tr>";
         $html .= "<th>Département</th>";
@@ -36,7 +51,7 @@ class EtablissementsController extends AbstractController
       }
 
       $html .= "<tr>";
-      $html .= "<td><a href='/etablissements/departement/".$item->getid()."'>".$item->getLibelleDepartement()."</a></td>";
+      $html .= "<td><a href='/etablissements/Departement/".$item->getid()."'>".$item->getLibelleDepartement()."</a></td>";
       $html .= "<td><a href='/etablissements/Region/".$item->getid()."'>".$item->getLibelleRegion()."</a></td>";
       $html .= "<td><a href='/etablissements/Commune/".$item->getid()."'>".$item->getCodeCommune()."</a></td>";
       $html .= "<td><a href='/etablissements/Academie/".$item->getid()."'>".$item->getLibelleAcademie()."</a></td>";
@@ -91,6 +106,7 @@ class EtablissementsController extends AbstractController
         $tableau .= "<th>Commune</th>";
         $tableau .= "<th>Académie</th>";
         $tableau .= "<th>Privé / Public</th>";
+        $tableau .= "<th>Commentaire</th>";
         $nomColonnesFait = true;
       }
 
@@ -101,6 +117,7 @@ class EtablissementsController extends AbstractController
       $tableau .= "<td>".$departement[$i]->getCodeCommune()."</td>";
       $tableau .= "<td>".$departement[$i]->getLibelleAcademie()."</td>";
       $tableau .= "<td>".$departement[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= "<td><a href='/etablissements/Commentaire/".$departement[$i]->getId()."'>Commentaires</a></td>";
       $tableau .= '</tr>';
     }
     $tableau .= "</table>";
@@ -142,6 +159,7 @@ class EtablissementsController extends AbstractController
         $tableau .= "<th>Commune</th>";
         $tableau .= "<th>Académie</th>";
         $tableau .= "<th>Privé / Public</th>";
+        $tableau .= "<th>Commentaire</th>";
         $nomColonnesFait = true;
       }
 
@@ -152,6 +170,7 @@ class EtablissementsController extends AbstractController
       $tableau .= "<td>".$region[$i]->getCodeCommune()."</td>";
       $tableau .= "<td>".$region[$i]->getLibelleAcademie()."</td>";
       $tableau .= "<td>".$region[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= "<td><a href='/etablissements/Commentaire/".$region[$i]->getId()."'>Commentaires</a></td>";
       $tableau .= '</tr>';
     }
     $tableau .= "</table>";
@@ -194,6 +213,7 @@ class EtablissementsController extends AbstractController
         $tableau .= "<th>Commune</th>";
         $tableau .= "<th>Académie</th>";
         $tableau .= "<th>Privé / Public</th>";
+        $tableau .= "<th>Commentaire</th>";
         $nomColonnesFait = true;
       }
 
@@ -204,6 +224,7 @@ class EtablissementsController extends AbstractController
       $tableau .= "<td>".$commune[$i]->getCodeCommune()."</td>";
       $tableau .= "<td>".$commune[$i]->getLibelleAcademie()."</td>";
       $tableau .= "<td>".$commune[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= "<td><a href='/etablissements/Commentaire/".$commune[$i]->getId()."'>Commentaires</a></td>";
       $tableau .= '</tr>';
     }
     $tableau .= "</table>";
@@ -257,6 +278,7 @@ class EtablissementsController extends AbstractController
         $tableau .= "<th>Commune</th>";
         $tableau .= "<th>Académie</th>";
         $tableau .= "<th>Privé / Public</th>";
+        $tableau .= "<th>Commentaire</th>";
         $nomColonnesFait = true;
       }
 
@@ -267,6 +289,7 @@ class EtablissementsController extends AbstractController
       $tableau .= "<td>".$academie[$i]->getCodeCommune()."</td>";
       $tableau .= "<td>".$academie[$i]->getLibelleAcademie()."</td>";
       $tableau .= "<td>".$academie[$i]->getSecteurPublicPrive()."</td>";
+      $tableau .= "<td><a href='/etablissements/Commentaire/".$academie[$i]->getId()."'>Commentaires</a></td>";
       $tableau .= '</tr>';
     }
     $tableau .= "</table>";
@@ -279,60 +302,42 @@ class EtablissementsController extends AbstractController
    */
   public function index(): Response
   {
-      return new Response ("<meta http-equiv='refresh' content='0; URL=/etablissements'>");
+    return new Response ("<meta http-equiv='refresh' content='0; URL=/etablissements'>");
   }
 
-
-   public function modifier(...$arguments) : void
-   {
-
-        $etablissement = $this
-            ->getDoctrine()
-            ->getRepository(Etablissements::class)
-            ->find($arguments[0]);
-        $etablissement->setAppelationOfficielle($arguments[1]);
-        $etablissement->setDenominationPrincipale($arguments[2]);
-        $etablissement->setDateOuverture($arguments[3]);
-        $etablissement->setCodeCommune($arguments[4]);
-        $etablissement->setLibelleAcademie($arguments[5]);
-        $etablissement->setSeceurPublicPrive($arguments[6]);
-
-   }
-
-
-
-
-
   /**
-   * @Route("/test")
+   * @Route("/etablissements/Commentaire/{id}")
    */
 
-  public function afficheTest() : Response
+  public function afficheCommentaireEtablissement($id) : Response
   {
-    $html = "";
-      //$html .= "<table>";
-    $nomColonnesFait = false;
+  	$etablissement = $this
+    ->getDoctrine()
+    ->getRepository(Etablissements::class)
+    ->find($id);
+    
+    $commentaires = $etablissement->getCommentaires();
 
-    for($i = 12860; $i < 12901; $i++) {
-      if(!$nomColonnesFait){
-        $html .= "<tr>";
-        $html .= "<th>Département</th>";
-        $html .= "<th>Région</th>";
-        $html .= "<th>Commune</th>";
-        $html .= "<th>Académie</th>";
-        $nomColonnesFait = true;
-      }
+    $tableau  = "<tr>";
+    $tableau .= "<th>Etablissement</th>";
+    $tableau .= "<th>Pseudo</th>";
+    $tableau .= "<th>Date</th>";
+    $tableau .= "<th>Note</th>";
+    $tableau .= "<th>Commentaire</th>";
 
-      $html .= "<tr>";
-      $html .= "<td>test</td>";
-      $html .= "<td>test</td>";
-      $html .= "<td>test</td>";
-      $html .= "<td>test</td>";
-      $html .= '</tr>';
+    for($i = 0; $i < $commentaires->count(); $i++) {
+		$tableau .= "<tr>";
+		$tableau .= "<td>".$etablissement->getAppelationOfficielle()."</td>";
+		$tableau .= "<td>".$commentaires[$i]->getNom()."</td>";
+		$tableau .= "<td>".$commentaires[$i]->getDateCreation()->format('Y-m-d')."</td>";
+		$tableau .= "<td>".$commentaires[$i]->getNote()." ☆ </td>";
+		$tableau .= "<td></td>";
+		$tableau .= "</tr>";
     }
-      //$html .= "</table>";
 
+    $html = $etablissement->getAppelationOfficielle()."</br>
+    <a href='/etablissements/Commentaire/ajout/".$etablissement->getId()."'>Ajouter un commentaire</a>";
 
-    return new Response ($html);
+    return $this->render('etablissementsController.html.twig', ['tableau' => $tableau, 'nom' => 'Commentaires', 'texte' => $html]);
   }
 }
