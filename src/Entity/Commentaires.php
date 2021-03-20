@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CommentairesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -36,6 +38,16 @@ class Commentaires
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $texte;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Etablissements::class, mappedBy="commentaire")
+     */
+    private $etablissements;
+
+    public function __construct()
+    {
+        $this->etablissements = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -86,6 +98,36 @@ class Commentaires
     public function setTexte(?string $texte): self
     {
         $this->texte = $texte;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Etablissements[]
+     */
+    public function getEtablissements(): Collection
+    {
+        return $this->etablissements;
+    }
+
+    public function addEtablissement(Etablissements $etablissement): self
+    {
+        if (!$this->etablissements->contains($etablissement)) {
+            $this->etablissements[] = $etablissement;
+            $etablissement->setCommentaire($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEtablissement(Etablissements $etablissement): self
+    {
+        if ($this->etablissements->removeElement($etablissement)) {
+            // set the owning side to null (unless already changed)
+            if ($etablissement->getCommentaire() === $this) {
+                $etablissement->setCommentaire(null);
+            }
+        }
 
         return $this;
     }

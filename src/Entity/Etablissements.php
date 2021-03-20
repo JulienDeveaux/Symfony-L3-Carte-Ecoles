@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\EtablissementsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -10,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Etablissements
 {
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -181,6 +184,11 @@ class Etablissements
      * @ORM\Column(type="integer", nullable=true)
      */
     private $date_ouverture;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Commentaires::class, inversedBy="etablissements")
+     */
+    private $commentaire;
 
     public function getId(): ?int
     {
@@ -579,6 +587,18 @@ class Etablissements
     public function setDateOuverture(?int $date_ouverture): self
     {
         $this->date_ouverture = $date_ouverture;
+
+        return $this;
+    }
+
+    public function getCommentaire(): ?Commentaires
+    {
+        return $this->commentaire;
+    }
+
+    public function setCommentaire(?Commentaires $commentaire): self
+    {
+        $this->commentaire = $commentaire;
 
         return $this;
     }

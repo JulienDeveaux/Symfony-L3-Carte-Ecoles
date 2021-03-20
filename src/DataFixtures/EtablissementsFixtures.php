@@ -17,7 +17,7 @@ class EtablissementsFixtures extends Fixture
         	$line = fgetcsv($csv, 0, ';');
         	if($i > 0) {
         		$etablissements = new Etablissements();
-        		$etablissements->setAppelationOfficielle($line[1]);
+        		$etablissements->setAppelationOfficielle((string)$line[1]);
         		$etablissements->setDenominationPrincipale($line[2]);
         		$etablissements->setPatronyme($line[3]);
         		$etablissements->setSecteurPublicPrive($line[4]);
@@ -52,7 +52,7 @@ class EtablissementsFixtures extends Fixture
         		$etablissements->setDateOuverture((int)$line[33]);
 
         		$manager->persist($etablissements);
-        		if($i % 100 == 0) {
+        		if($i % 10000 == 0) {
         			$manager->flush();
         		}
         	}
