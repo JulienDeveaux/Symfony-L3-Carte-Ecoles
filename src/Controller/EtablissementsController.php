@@ -1,6 +1,7 @@
 <?php
 namespace App\Controller;
 
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,7 +50,7 @@ class EtablissementsController extends AbstractController
   }
 
   /**
-   * @Route("/etablissements/departement/{id}")
+   * @Route("/etablissements/Departement/{id}")
    */
   public function afficheDepartement($id): Response
   {
@@ -276,10 +277,31 @@ class EtablissementsController extends AbstractController
   /**
    * @Route("/")
    */
-  public function index(): RedirectResponse
+  public function index(): Response
   {
-    return $this->redirectToRoute("/etablissements");
+      return new Response ("<meta http-equiv='refresh' content='0; URL=/etablissements'>");
   }
+
+
+   public function modifier(...$arguments) : void
+   {
+
+        $etablissement = $this
+            ->getDoctrine()
+            ->getRepository(Etablissements::class)
+            ->find($arguments[0]);
+        $etablissement->setAppelationOfficielle($arguments[1]);
+        $etablissement->setDenominationPrincipale($arguments[2]);
+        $etablissement->setDateOuverture($arguments[3]);
+        $etablissement->setCodeCommune($arguments[4]);
+        $etablissement->setLibelleAcademie($arguments[5]);
+        $etablissement->setSeceurPublicPrive($arguments[6]);
+
+   }
+
+
+
+
 
   /**
    * @Route("/test")
