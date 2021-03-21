@@ -53,7 +53,7 @@ class EtablissementsController extends AbstractController
             $html .= "<tr>";
             $html .= "<td><a href='/etablissements/Departement/".$item->getid()."'>".$item->getLibelleDepartement()."</a></td>";
             $html .= "<td><a href='/etablissements/Region/".$item->getid()."'>".$item->getLibelleRegion()."</a></td>";
-            $html .= "<td><a href='/etablissements/Commune/".$item->getid()."'>".$item->getCodeCommune()."</a></td>";
+            $html .= "<td><a href='/etablissements/Commune/".$item->getid()."'>".$item->getLibelleCommune()."</a></td>";
             $html .= "<td><a href='/etablissements/Academie/".$item->getid()."'>".$item->getLibelleAcademie()."</a></td>";
             $html .= '</tr>';
         }
@@ -115,7 +115,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$departement[$i]->getAppelationOfficielle()."</td>";
             $tableau .= "<td>".$departement[$i]->getDenominationPrincipale()."</td>";
             $tableau .= "<td>".$departement[$i]->getDateOuverture()."</td>";
-            $tableau .= "<td>".$departement[$i]->getCodeCommune()."</td>";
+            $tableau .= "<td>".$departement[$i]->getLibelleCommune()."</td>";
             $tableau .= "<td>".$departement[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$departement[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$departement[$i]->getId()."'>Commentaires</a></td>";
@@ -169,7 +169,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$region[$i]->getAppelationOfficielle()."</td>";
             $tableau .= "<td>".$region[$i]->getDenominationPrincipale()."</td>";
             $tableau .= "<td>".$region[$i]->getDateOuverture()."</td>";
-            $tableau .= "<td>".$region[$i]->getCodeCommune()."</td>";
+            $tableau .= "<td>".$region[$i]->getLibelleCommune()."</td>";
             $tableau .= "<td>".$region[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$region[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$region[$i]->getId()."'>Commentaires</a></td>";
@@ -224,7 +224,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$commune[$i]->getAppelationOfficielle()."</td>";
             $tableau .= "<td>".$commune[$i]->getDenominationPrincipale()."</td>";
             $tableau .= "<td>".$commune[$i]->getDateOuverture()."</td>";
-            $tableau .= "<td>".$commune[$i]->getCodeCommune()."</td>";
+            $tableau .= "<td>".$commune[$i]->getLibelleCommune()."</td>";
             $tableau .= "<td>".$commune[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$commune[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$commune[$i]->getId()."'>Commentaires</a></td>";
@@ -290,7 +290,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$academie[$i]->getAppelationOfficielle()."</td>";
             $tableau .= "<td>".$academie[$i]->getDenominationPrincipale()."</td>";
             $tableau .= "<td>".$academie[$i]->getDateOuverture()."</td>";
-            $tableau .= "<td>".$academie[$i]->getCodeCommune()."</td>";
+            $tableau .= "<td>".$academie[$i]->getLibelleCommune()."</td>";
             $tableau .= "<td>".$academie[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$academie[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$academie[$i]->getId()."'>Commentaires</a></td>";

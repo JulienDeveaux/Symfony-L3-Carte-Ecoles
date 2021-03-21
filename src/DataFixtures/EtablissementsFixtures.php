@@ -28,30 +28,31 @@ class EtablissementsFixtures extends Fixture
         		$etablissements->setBoitePostale((int)$line[7]);
         		$etablissements->setCodePostal($line[8]);
         		$etablissements->setLocalite($line[9]);
-        		$etablissements->setCoorX((float)$line[10]);
-        		$etablissements->setCoorY((float)$line[11]);
-        		$etablissements->setEpsg($line[12]);
-        		$etablissements->setLatitude((float)$line[13]);
-        		$etablissements->setLongitude((float)$line[14]);
-        		$etablissements->setAppariement($line[15]);
-        		$etablissements->setLocalisation($line[16]);
-        		$etablissements->setNatureUai($line[17]);
-        		$etablissements->setNatureUaiLibe($line[18]);
-        		$etablissements->setEtatEtablissement($line[19]);
-        		$etablissements->setEtatEtablissementLibe($line[20]);
-        		$etablissements->setCodeDepartement((int)$line[21]);
-        		$etablissements->setCodeRegion((int)$line[22]);
-        		$etablissements->setCodeAcademie((int)$line[23]);
-        		$etablissements->setCodeCommune((int)$line[24]);
-        		$etablissements->setLibelleDepartement($line[25]);
-        		$etablissements->setLibelleRegion($line[26]);
-        		$etablissements->setLibelleAcademie($line[27]);
-        		$etablissements->setPosition((float)$line[28]);
-        		$etablissements->setSecteurPriveCodeTypeContrat((float)$line[29]);
-        		$etablissements->setSecteurPriveLibelleTypeContrat((int)$line[30]);
-        		$etablissements->setCodeMinistere($line[31]);
-        		$etablissements->setLibelleMinistere($line[32]);
-        		$etablissements->setDateOuverture((int)$line[33]);
+        		$etablissements->setLibelleCommune($line[10]);
+        		$etablissements->setCoorX((float)$line[11]);
+        		$etablissements->setCoorY((float)$line[12]);
+        		$etablissements->setEpsg($line[13]);
+        		$etablissements->setLatitude((float)$line[14]);
+        		$etablissements->setLongitude((float)$line[15]);
+        		$etablissements->setAppariement($line[16]);
+        		$etablissements->setLocalisation($line[17]);
+        		$etablissements->setNatureUai($line[18]);
+        		$etablissements->setNatureUaiLibe($line[19]);
+        		$etablissements->setEtatEtablissement($line[20]);
+        		$etablissements->setEtatEtablissementLibe($line[21]);
+        		$etablissements->setCodeDepartement((int)$line[22]);
+        		$etablissements->setCodeRegion((int)$line[23]);
+        		$etablissements->setCodeAcademie((int)$line[24]);
+        		$etablissements->setCodeCommune((int)$line[25]);
+        		$etablissements->setLibelleDepartement($line[26]);
+        		$etablissements->setLibelleRegion($line[27]);
+        		$etablissements->setLibelleAcademie($line[28]);
+        		$etablissements->setPosition((float)$line[29]);
+        		$etablissements->setSecteurPriveCodeTypeContrat((float)$line[30]);
+        		$etablissements->setSecteurPriveLibelleTypeContrat((int)$line[31]);
+        		$etablissements->setCodeMinistere($line[32]);
+        		$etablissements->setLibelleMinistere($line[33]);
+        		$etablissements->setDateOuverture((int)$line[34]);
 
                 $commentaire = new Commentaires();
                 $commentaire->setNom("Ceci est un nom automatique " . $i);
@@ -64,9 +65,9 @@ class EtablissementsFixtures extends Fixture
                 $etablissements->addCommentaire($commentaire);
 
         		$manager->persist($etablissements);
-        		if($i % 20000 == 0) {
+        		if($i % 30000 == 0) {
         			$manager->flush();
-                    break;
+        			break;
         		}
         	}
         	$i = $i + 1;

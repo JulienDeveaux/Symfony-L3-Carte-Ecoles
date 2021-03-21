@@ -176,7 +176,7 @@ class Etablissements
     private $code_ministere;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      */
     private $libelle_ministere;
 
@@ -189,6 +189,11 @@ class Etablissements
      * @ORM\OneToMany(targetEntity=Commentaires::class, mappedBy="etablissement")
      */
     private $commentaires;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $libelle_commune;
 
     public function __construct()
     {
@@ -572,12 +577,12 @@ class Etablissements
         return $this;
     }
 
-    public function getLibelleMinistere(): ?int
+    public function getLibelleMinistere(): ?String
     {
         return $this->libelle_ministere;
     }
 
-    public function setLibelleMinistere(?int $libelle_ministere): self
+    public function setLibelleMinistere(?String $libelle_ministere): self
     {
         $this->libelle_ministere = $libelle_ministere;
 
@@ -622,6 +627,18 @@ class Etablissements
                 $commentaire->setEtablissement(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLibelleCommune(): ?string
+    {
+        return $this->libelle_commune;
+    }
+
+    public function setLibelleCommune(?string $libelle_commune): self
+    {
+        $this->libelle_commune = $libelle_commune;
 
         return $this;
     }
