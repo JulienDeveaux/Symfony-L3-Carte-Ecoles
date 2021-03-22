@@ -1,12 +1,19 @@
 <?php
 namespace App\Controller;
 
+
+use DateTime;
+use DateTimeInterface;
+use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
 use App\Entity\Etablissements;
 use App\Entity\Commentaires;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 
 
@@ -108,6 +115,7 @@ class EtablissementsController extends AbstractController
                 $tableau .= "<th>Académie</th>";
                 $tableau .= "<th>Privé / Public</th>";
                 $tableau .= "<th>Commentaire</th>";
+                $tableau .= "<th>Modification</th>";
                 $nomColonnesFait = true;
             }
 
@@ -119,6 +127,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$departement[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$departement[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$departement[$i]->getId()."'>Commentaires</a></td>";
+            $tableau .= "<td><a href='/etablissements/form/".$departement[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -162,6 +171,7 @@ class EtablissementsController extends AbstractController
                 $tableau .= "<th>Académie</th>";
                 $tableau .= "<th>Privé / Public</th>";
                 $tableau .= "<th>Commentaire</th>";
+                $tableau .= "<th>Modification</th>";
                 $nomColonnesFait = true;
             }
 
@@ -217,6 +227,7 @@ class EtablissementsController extends AbstractController
                 $tableau .= "<th>Académie</th>";
                 $tableau .= "<th>Privé / Public</th>";
                 $tableau .= "<th>Commentaire</th>";
+                $tableau .= "<th>Modification</th>";
                 $nomColonnesFait = true;
             }
 
@@ -283,6 +294,7 @@ class EtablissementsController extends AbstractController
                 $tableau .= "<th>Académie</th>";
                 $tableau .= "<th>Privé / Public</th>";
                 $tableau .= "<th>Commentaire</th>";
+                $tableau .= "<th>Modification</th>";
                 $nomColonnesFait = true;
             }
 
@@ -328,6 +340,7 @@ class EtablissementsController extends AbstractController
         $tableau .= "<th>Date</th>";
         $tableau .= "<th>Note</th>";
         $tableau .= "<th>Commentaire</th>";
+        $tableau .= "<th>Modification</th>";
 
         for($i = 0; $i < $commentaires->count(); $i++) {
             $tableau .= "<tr>";
@@ -388,5 +401,26 @@ draw_map(data);
 </script>";
 
         return $this->render('map.html.twig', ['nom' => 'Localisation', 'html' => $html]);
+    }
+    
+    /*
+     * @Route("/etablissements/form/{id}", name="etablissement_form")
+     */
+    public function formEtablissement(Etablissements $etablissements):Response
+    {
+
+        $date = new dateTime();
+        $date->setDate(2020, 10, 21);
+        $etablissementsForm = $this->createFormBuilder($etablissements)
+            ->add('appelation_officielle', TextType::class)
+            ->add('denomination_principale', TextType::class)
+            //->add('date_ouverture', DateTime::class)      /TODO DateTime implements FromSymfony exception
+            ->add('libelle_commune', TextType::class)
+            ->add('libelle_academie', TextType::class)
+            ->add('secteur_public_prive', TextType::class)
+            ->add('save', SubmitType::class, array('label'=> 'OK'))
+            ->getForm();
+
+        return $this->render('form.html.twig', array('form'=> $etablissementsForm->createView(),));
     }
 }
