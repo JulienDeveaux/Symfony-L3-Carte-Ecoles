@@ -65,7 +65,7 @@ class EtablissementsFixtures extends Fixture
                 $etablissements->addCommentaire($commentaire);
 
         		$manager->persist($etablissements);
-        		if($i % 30000 == 0) {
+        		if($i % 10000 == 0) {
         			$manager->flush();
         			break;
         		}
