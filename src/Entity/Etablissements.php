@@ -6,7 +6,7 @@ use App\Repository\EtablissementsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass=EtablissementsRepository::class)
  */
@@ -14,6 +14,8 @@ class Etablissements
 {
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -21,176 +23,245 @@ class Etablissements
     private $id;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $appelation_officielle;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $denomination_principale;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $patronyme;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank()
+     *
+     * @ORM\Column(type="string", columnDefinition="enum('Public','Prive')")
      */
     private $secteur_public_prive;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $addresse;
 
     /**
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $lieu_dit;
 
     /**
+     *
      * @ORM\Column(type="integer", nullable=true)
      */
     private $boite_postale;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="integer")
      */
     private $code_postal;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $localite;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $coorX;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $coorY;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $epsg;
 
     /**
      * @ORM\Column(type="float")
+     *
+     *  @Assert\Range(
+     *      min = -90,
+     *      max = 90,
+     *      notInRangeMessage = "La latitude doit avoir une valeur entre {{ min }} et {{ max }} degres",
+     * )
      */
     private $latitude;
 
     /**
      * @ORM\Column(type="float")
+     *
+     * @Assert\Range(
+     *     min = 0,
+     *      max = 180,
+     *      notInRangeMessage = "La longitude doit avoir une valeur entre {{ min }} et {{ max }} degres",
+     * )
      */
     private $longitude;
 
     /**
+     *
      * @ORM\Column(type="string", length=255)
      */
     private $appariement;
 
     /**
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $localisation;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $nature_uai;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $nature_uai_libe;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $etat_etablissement;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $etat_etablissement_libe;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="integer")
      */
     private $code_departement;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="integer")
      */
     private $code_region;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="integer")
      */
     private $code_academie;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="integer")
      */
     private $code_commune;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $libelle_departement;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $libelle_region;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $libelle_academie;
 
     /**
+     *
      * @ORM\Column(type="float")
      */
     private $position;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="float")
      */
     private $secteur_prive_code_type_contrat;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="integer", nullable=true)
      */
     private $secteur_prive_libelle_type_contrat;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $code_ministere;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", nullable=true)
      */
     private $libelle_ministere;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="integer", nullable=true)
      */
     private $date_ouverture;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\OneToMany(targetEntity=Commentaires::class, mappedBy="etablissement")
      */
     private $commentaires;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $libelle_commune;
