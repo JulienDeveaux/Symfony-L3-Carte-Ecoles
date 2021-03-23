@@ -360,6 +360,50 @@ class EtablissementsController extends AbstractController
     }
 
     /**
+     * @Route("/etablissements/cartographieCommune/{id}")
+     */
+    public function carteographieCommune($id): Response
+    {
+        $html = "<script>
+        const draw_map = (data) => {  
+        const map = L.map('map')
+        .fitBounds(data.map((d) => [d.lat,d.lon]))
+        .addLayer(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href=https://www.openstreetmap.org/copyright>OpenStreetMap</a> contributors'
+    }));
+  data.forEach((etablissement) => {
+    L.marker([etablissement.lat, etablissement.lon]).addTo(map).bindPopup('<b>'+etablissement.nom+'</b>');
+  });
+};
+
+const data = [
+  {
+    nom:'Ecole élémentaire Dauphine',
+    lat:'49.48957543806298',
+    lon:'0.11556983645413253'
+  },
+  {
+    nom:'Collège Descartes',
+    lat:'49.51941345248356',
+    lon:'0.10888053221663069'
+  },
+  {
+    nom:'Lycée général François Ier',
+    lat:'49.49610537217045',
+    lon:'0.1137094907033469'
+  },
+  /*
+    TODO: à vous d'ajouter la suite dynamiquement avec TWIG...
+  */
+];
+
+draw_map(data);
+</script>";
+
+        return $this->render('map.html.twig', ['nom' => 'Localisation', 'html' => $html]);
+    }
+    
+    /*
      * @Route("/etablissements/form/{id}", name="etablissement_form")
      */
     public function formEtablissement(Etablissements $etablissements):Response
@@ -378,6 +422,5 @@ class EtablissementsController extends AbstractController
             ->getForm();
 
         return $this->render('form.html.twig', array('form'=> $etablissementsForm->createView(),));
-
     }
 }
