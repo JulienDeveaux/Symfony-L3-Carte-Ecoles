@@ -3,7 +3,25 @@
 {% block title %}Etablissements{% endblock  %}
 
 {% block body %}
-    <div id="map" style="height: 500px;">{{ html | raw }}</div>
+    <div id="map" style="height: 500px;">
+    	<script>
+		const draw_map = (data) => {  
+  			const map = L.map('map')
+    			.fitBounds(data.map((d) => [d.lat,d.lon]))
+    			.addLayer(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      				attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    		}));
+  		data.forEach((etablissement) => {
+    		L.marker([etablissement.lat, etablissement.lon]).addTo(map).bindPopup("<b>"+etablissement.nom+"</b>");
+  		});
+	};
+	const data = [
+    	{{ html | raw }}
+    ];
+
+	draw_map(data);
+	</script>
+    </div>
 
     <div id="container">
     <h1>{{ nom }}</h1>

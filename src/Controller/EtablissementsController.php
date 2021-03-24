@@ -375,39 +375,12 @@ class EtablissementsController extends AbstractController
             ->getRepository(Etablissements::class)
             ->findBy(array('code_commune' => $commune->getCodeCommune()));
 
-        $html = "<script>
-        const draw_map = (data) => {  
-        const map = L.map('map')
-        .fitBounds(data.map((d) => [d.lat,d.lon]))
-        .addLayer(L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href=https://www.openstreetmap.org/copyright>OpenStreetMap</a> contributors'
-    }));
-  data.forEach((etablissement) => {
-    L.marker([etablissement.lat, etablissement.lon]).addTo(map).bindPopup('<b>'+etablissement.nom+'</b>');
-  });
-};
-
-const data = [
-";
+        $html = "";
 
     for($i = 0; $i < sizeof($etablissementsCommune);$i++) {
+        $html .= '{nom:"'.$etablissementsCommune[$i]->getAppelationOfficielle().'",lat:"'.$etablissementsCommune[$i]->getLatitude().'",lon:"'.$etablissementsCommune[$i]->getLongitude().'"},';
 
-$html .= 
-'{
-    nom:"'.$etablissementsCommune[$i]->getAppelationOfficielle().'",
-    lat:"'.$etablissementsCommune[$i]->getLatitude().'",
-    lon:"'.$etablissementsCommune[$i]->getLongitude().'"
-},
-';
-
-    }
-
-
-$html .= "
-];
-
-draw_map(data);
-</script>";
+        }
 
         return $this->render('map.html.twig', ['nom' => 'Localisation des Etablissements '.$commune->getLibelleCommune(), 'html' => $html]);
     }
