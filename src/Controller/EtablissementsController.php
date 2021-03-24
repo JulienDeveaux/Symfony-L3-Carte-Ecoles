@@ -206,6 +206,7 @@ class EtablissementsController extends AbstractController
             ->findBy(array('code_commune' => $item->getCodeCommune()));
 
         $html = "<p><a href='/etablissements/'>Retour à la liste principale</a>"
+            ." </br><a href='/etablissements/cartographieCommune/".$item->getId()."'>Carte des emplacements de établissements</a>"
             ." </br>Code postal : ".$item->getCodePostal()
             ." </br>code département : ".$item->getCodeDepartement()
             ." </br>Appelation officielle : ".$item->getAppelationOfficielle()
@@ -364,6 +365,16 @@ class EtablissementsController extends AbstractController
      */
     public function carteographieCommune($id): Response
     {
+        $commune = $this
+            ->getDoctrine()
+            ->getRepository(Etablissements::class)
+            ->find($id);
+
+        $etablissementsCommune = $this
+            ->getDoctrine()
+            ->getRepository(Etablissements::class)
+            ->findBy(array('code_commune' => $commune->getCodeCommune()));
+
         $html = "<script>
         const draw_map = (data) => {  
         const map = L.map('map')
@@ -377,30 +388,28 @@ class EtablissementsController extends AbstractController
 };
 
 const data = [
-  {
-    nom:'Ecole élémentaire Dauphine',
-    lat:'49.48957543806298',
-    lon:'0.11556983645413253'
-  },
-  {
-    nom:'Collège Descartes',
-    lat:'49.51941345248356',
-    lon:'0.10888053221663069'
-  },
-  {
-    nom:'Lycée général François Ier',
-    lat:'49.49610537217045',
-    lon:'0.1137094907033469'
-  },
-  /*
-    TODO: à vous d'ajouter la suite dynamiquement avec TWIG...
-  */
+";
+
+    for($i = 0; $i < sizeof($etablissementsCommune);$i++) {
+
+$html .= 
+'{
+    nom:"'.$etablissementsCommune[$i]->getAppelationOfficielle().'",
+    lat:"'.$etablissementsCommune[$i]->getLatitude().'",
+    lon:"'.$etablissementsCommune[$i]->getLongitude().'"
+},
+';
+
+    }
+
+
+$html .= "
 ];
 
 draw_map(data);
 </script>";
 
-        return $this->render('map.html.twig', ['nom' => 'Localisation', 'html' => $html]);
+        return $this->render('map.html.twig', ['nom' => 'Localisation des Etablissements '.$commune->getLibelleCommune(), 'html' => $html]);
     }
     
     /*
