@@ -2,10 +2,12 @@
 namespace App\Controller;
 
 
+use App\Form\EtablissementType;
 use DateTime;
 use DateTimeInterface;
 use phpDocumentor\Reflection\DocBlock\Tags\Deprecated;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,6 +16,7 @@ use App\Entity\Commentaires;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 
 
@@ -183,6 +186,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$region[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$region[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$region[$i]->getId()."'>Commentaires</a></td>";
+            $tableau .= "<td><a href='/etablissements/form/".$region[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -240,6 +244,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$commune[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$commune[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$commune[$i]->getId()."'>Commentaires</a></td>";
+            $tableau .= "<td><a href='/etablissements/form/".$commune[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -307,6 +312,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$academie[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$academie[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$academie[$i]->getId()."'>Commentaires</a></td>";
+            $tableau .= "<td><a href='/etablissements/form/".$academie[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -384,25 +390,29 @@ class EtablissementsController extends AbstractController
 
         return $this->render('map.html.twig', ['nom' => 'Localisation des Etablissements '.$commune->getLibelleCommune(), 'html' => $html]);
     }
-    
-    /*
-     * @Route("/etablissements/form/{id}", name="etablissement_form")
+
+    /**
+     * @Route("/etablissements/form/{id}")
      */
-    public function formEtablissement(Etablissements $etablissements):Response
+    public function formEtablissement($id, Request $request):Response
     {
+        $manager = $this->getDoctrine()->getManager();
+        $etablissement = $this
+            ->getDoctrine()
+            ->getRepository(Etablissements::class)
+            ->find($id);
 
-        $date = new dateTime();
-        $date->setDate(2020, 10, 21);
-        $etablissementsForm = $this->createFormBuilder($etablissements)
-            ->add('appelation_officielle', TextType::class)
-            ->add('denomination_principale', TextType::class)
-            //->add('date_ouverture', DateTime::class)      /TODO DateTime implements FromSymfony exception
-            ->add('libelle_commune', TextType::class)
-            ->add('libelle_academie', TextType::class)
-            ->add('secteur_public_prive', TextType::class)
-            ->add('save', SubmitType::class, array('label'=> 'OK'))
-            ->getForm();
+        $etablissementForm = $this->createForm(EtablissementType::class, $etablissement)
+            ->add('save', SubmitType::class, array('label' => 'OK'));
+        $etablissementForm->handleRequest($request);
 
-        return $this->render('form.html.twig', array('form'=> $etablissementsForm->createView(),));
+        if ($etablissementForm->isSubmitted() && $etablissementForm->isValid()) {
+            $manager->persist($etablissement);
+            $manager->flush();
+        }
+
+        return $this->render('form.html.twig', [
+            'form' => $etablissementForm->createView()
+        ]);
     }
 }

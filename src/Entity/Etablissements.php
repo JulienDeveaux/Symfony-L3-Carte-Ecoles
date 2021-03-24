@@ -239,7 +239,6 @@ class Etablissements
     private $code_ministere;
 
     /**
-     * @Assert\NotBlank()
      *
      * @ORM\Column(type="string", nullable=true)
      */
