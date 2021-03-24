@@ -123,7 +123,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$departement[$i]->getAppelationOfficielle()."</td>";
             $tableau .= "<td>".$departement[$i]->getDenominationPrincipale()."</td>";
             $tableau .= "<td>".$departement[$i]->getDateOuverture()."</td>";
-            $tableau .= "<td>".$departement[$i]->getLibelleCommune()."</td>";
+            $tableau .= "<td><a href='/etablissements/Commune/".$departement[$i]->getId()."'>".$departement[$i]->getLibelleCommune()."</a></td>";
             $tableau .= "<td>".$departement[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$departement[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$departement[$i]->getId()."'>Commentaires</a></td>";
@@ -179,7 +179,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$region[$i]->getAppelationOfficielle()."</td>";
             $tableau .= "<td>".$region[$i]->getDenominationPrincipale()."</td>";
             $tableau .= "<td>".$region[$i]->getDateOuverture()."</td>";
-            $tableau .= "<td>".$region[$i]->getLibelleCommune()."</td>";
+            $tableau .= "<td><a href='/etablissements/Commune/".$region[$i]->getId()."'>".$region[$i]->getLibelleCommune()."</a></td>";
             $tableau .= "<td>".$region[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$region[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$region[$i]->getId()."'>Commentaires</a></td>";
@@ -303,7 +303,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$academie[$i]->getAppelationOfficielle()."</td>";
             $tableau .= "<td>".$academie[$i]->getDenominationPrincipale()."</td>";
             $tableau .= "<td>".$academie[$i]->getDateOuverture()."</td>";
-            $tableau .= "<td>".$academie[$i]->getLibelleCommune()."</td>";
+            $tableau .= "<td><a href='/etablissements/Commune/".$academie[$i]->getId()."'>".$academie[$i]->getLibelleCommune()."</a></td>";
             $tableau .= "<td>".$academie[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$academie[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$academie[$i]->getId()."'>Commentaires</a></td>";
