@@ -23,11 +23,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 class EtablissementsController extends AbstractController
 {
     /**
-     * @Route("/etablissements")
+     * @Route("/etablissements", name="affiche")
      */
     public function affiche(): Response
     {
+        session_start();
+        $_SESSION['id'] = "";
+        $_SESSION['route'] = "affiche";
         $html = "";
+        $html .= "</br> <a href='/etablissements/Ajouter/'> Ajouter un établissement</a>";
         $html .= "<table>";
         $nomColonnesFait = false;
 
@@ -75,10 +79,13 @@ class EtablissementsController extends AbstractController
     }
 
     /**
-     * @Route("/etablissements/Departement/{id}")
+     * @Route("/etablissements/Departement/{id}", name="departementDetail")
      */
     public function afficheDepartement($id): Response
     {
+        session_start();
+        $_SESSION['id'] = $id;
+        $_SESSION['route'] = "departementDetail";
         $item = $this
             ->getDoctrine()
             ->getRepository(Etablissements::class)
@@ -93,6 +100,7 @@ class EtablissementsController extends AbstractController
             .$item->getCodeMinistere()
             ." </br> Nom ministère : "
             .$item->getLibelleMinistere()
+            ."</br> <a href='/etablissements/Ajouter/'> Ajouter un établissement</a>"
             ."</p>";
 
         if(!$item) {
@@ -130,7 +138,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$departement[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$departement[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$departement[$i]->getId()."'>Commentaires</a></td>";
-            $tableau .= "<td><a href='/etablissements/form/".$departement[$i]->getId()."'>Modification</a></td>";
+            $tableau .= "<td><a href='/etablissements/Modifier/".$departement[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -139,10 +147,13 @@ class EtablissementsController extends AbstractController
     }
 
     /**
-     * @Route("/etablissements/Region/{id}")
+     * @Route("/etablissements/Region/{id}", name="regionDetail")
      */
     public function afficheRegion($id): Response
     {
+        session_start();
+        $_SESSION['id'] = $id;
+        $_SESSION['route'] = "regionDetail";
         $item = $this->getDoctrine()->getRepository(Etablissements::class)->find($id);
         if(!$item) {
             return new Response("Non trouvé");
@@ -158,7 +169,9 @@ class EtablissementsController extends AbstractController
             ." </br>code region : ".$item->getCodeRegion()
             ." </br>Lieu dit : ".$item->getLieuDit()
             ." </br>Localite : ".$item->getLocalite()
-            ." </br>Académie : ".$item->getLibelleAcademie()."</p>";
+            ." </br>Académie : ".$item->getLibelleAcademie()
+            ."</br> <a href='/etablissements/Ajouter/'> Ajouter un établissement</a>"
+            ."</p>";
 
         $tableau = "";
         $tableau .= "<table>";
@@ -186,7 +199,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$region[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$region[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$region[$i]->getId()."'>Commentaires</a></td>";
-            $tableau .= "<td><a href='/etablissements/form/".$region[$i]->getId()."'>Modification</a></td>";
+            $tableau .= "<td><a href='/etablissements/Modifier/".$region[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -195,10 +208,13 @@ class EtablissementsController extends AbstractController
     }
 
     /**
-     * @Route("/etablissements/Commune/{id}")
+     * @Route("/etablissements/Commune/{id}", name="communeDetail")
      */
     public function afficheCommune($id): Response
     {
+        session_start();
+        $_SESSION['id'] = $id;
+        $_SESSION['route'] = "communeDetail";
         $item = $this->getDoctrine()->getRepository(Etablissements::class)->find($id);
         if(!$item) {
             return new Response("Non trouvé");
@@ -216,7 +232,9 @@ class EtablissementsController extends AbstractController
             ." </br>Appelation officielle : ".$item->getAppelationOfficielle()
             ." </br>Lieu dit : ".$item->getLieuDit()
             ." </br>Localite : ".$item->getLocalite()
-            ." </br>Académie : ".$item->getLibelleAcademie()."</p>";
+            ." </br>Académie : ".$item->getLibelleAcademie()
+            ." </br> <a href='/etablissements/Ajouter/'> Ajouter un établissement</a>"
+            ."</p>";
 
         $tableau = "";
         $tableau .= "<table>";
@@ -244,7 +262,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$commune[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$commune[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$commune[$i]->getId()."'>Commentaires</a></td>";
-            $tableau .= "<td><a href='/etablissements/form/".$commune[$i]->getId()."'>Modification</a></td>";
+            $tableau .= "<td><a href='/etablissements/Modifier/".$commune[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -253,14 +271,17 @@ class EtablissementsController extends AbstractController
     }
 
     /**
-     * @Route("/etablissements/Academie/{codeAcademie}")
+     * @Route("/etablissements/Academie/{id}", name="academieDetail")
      */
 
-    public function afficheAcademie($codeAcademie) : Response
+    public function afficheAcademie($id) : Response
     {
+        session_start();
+        $_SESSION['id'] = $id;
+        $_SESSION['route'] = "academieDetail";
         $item = $this->getDoctrine()
             ->getRepository(Etablissements::class)
-            ->find($codeAcademie);
+            ->find($id);
 
         if(!$item) {
             return new Response("Non trouvé");
@@ -284,6 +305,7 @@ class EtablissementsController extends AbstractController
             .$item->getLocalite()
             ." </br>Académie : "
             .$item->getLibelleAcademie()
+            ."</br> <a href='/etablissements/Ajouter/'> Ajouter un établissement</a>"
             ."</p>";
 
         $tableau = "";
@@ -312,7 +334,7 @@ class EtablissementsController extends AbstractController
             $tableau .= "<td>".$academie[$i]->getLibelleAcademie()."</td>";
             $tableau .= "<td>".$academie[$i]->getSecteurPublicPrive()."</td>";
             $tableau .= "<td><a href='/etablissements/Commentaire/".$academie[$i]->getId()."'>Commentaires</a></td>";
-            $tableau .= "<td><a href='/etablissements/form/".$academie[$i]->getId()."'>Modification</a></td>";
+            $tableau .= "<td><a href='/etablissements/Modifier/".$academie[$i]->getId()."'>Modification</a></td>";
             $tableau .= '</tr>';
         }
         $tableau .= "</table>";
@@ -328,43 +350,7 @@ class EtablissementsController extends AbstractController
         return new Response ("<meta http-equiv='refresh' content='0; URL=/etablissements'>");
     }
 
-    /**
-     * @Route("/etablissements/Commentaire/{id}")
-     */
 
-    public function afficheCommentaireEtablissement($id) : Response
-    {
-        $etablissement = $this
-            ->getDoctrine()
-            ->getRepository(Etablissements::class)
-            ->find($id);
-
-        $commentaires = $etablissement->getCommentaires();
-
-        $tableau  = "<tr>";
-        $tableau .= "<th>Etablissement</th>";
-        $tableau .= "<th>Pseudo</th>";
-        $tableau .= "<th>Date</th>";
-        $tableau .= "<th>Note</th>";
-        $tableau .= "<th>Commentaire</th>";
-        $tableau .= "<th>Modification</th>";
-
-        for($i = 0; $i < $commentaires->count(); $i++) {
-            $tableau .= "<tr>";
-            $tableau .= "<td>".$etablissement->getAppelationOfficielle()."</td>";
-            $tableau .= "<td>".$commentaires[$i]->getNom()."</td>";
-            $tableau .= "<td>".$commentaires[$i]->getDateCreation()->format('Y-m-d')."</td>";
-            $tableau .= "<td>".$commentaires[$i]->getNote()." ☆ </td>";
-            $tableau .= "<td></td>";
-            $tableau .= "</tr>";
-        }
-
-        $html = $etablissement->getAppelationOfficielle()."</br>
-    <a href='/etablissements/Commentaire/ajout/".$etablissement->getId()."'>Ajouter un commentaire</a>"
-            ." </br><a href='/etablissements/'>Retour à la liste principale</a>";
-
-        return $this->render('etablissementsController.html.twig', ['tableau' => $tableau, 'nom' => 'Commentaires', 'texte' => $html]);
-    }
 
     /**
      * @Route("/etablissements/cartographieCommune/{id}")
@@ -392,9 +378,9 @@ class EtablissementsController extends AbstractController
     }
 
     /**
-     * @Route("/etablissements/form/{id}")
+     * @Route("/etablissements/Modifier/{id}")
      */
-    public function formEtablissement($id, Request $request):Response
+    public function modifierEtablissement($id, Request $request)
     {
         $manager = $this->getDoctrine()->getManager();
         $etablissement = $this
@@ -402,17 +388,51 @@ class EtablissementsController extends AbstractController
             ->getRepository(Etablissements::class)
             ->find($id);
 
+        $maxId = $this
+            ->getDoctrine()
+            ->getManager()
+            ->createQueryBuilder()
+            ->select('MAX(e.id)')
+            ->from('App:Etablissements', 'e')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        if($id == -1){
+            $etablissement = new Etablissements();
+            $etablissement->setId($maxId + 1);
+        }
+
         $etablissementForm = $this->createForm(EtablissementType::class, $etablissement)
             ->add('save', SubmitType::class, array('label' => 'OK'));
         $etablissementForm->handleRequest($request);
 
+
         if ($etablissementForm->isSubmitted() && $etablissementForm->isValid()) {
+            $etablissement = $etablissementForm->getData();
             $manager->persist($etablissement);
             $manager->flush();
+            return $this->redirectToRoute($_SESSION['route'], ['id' => $_SESSION['id']]);
         }
 
-        return $this->render('form.html.twig', [
-            'form' => $etablissementForm->createView()
-        ]);
+        if($id == -1) {
+            return $this->render('form.html.twig', ['etat' => 'Ajouter l\'établissement',
+                'form' => $etablissementForm->createView()
+            ]);
+        } else {
+            return $this->render('form.html.twig', ['etat' => 'Modifier l\'établissement',
+                'form' => $etablissementForm->createView()
+            ]);
+        }
     }
-}
+
+    /**
+     * @Route("/etablissements/Ajouter/")
+     *
+     */
+    public function ajouterEtablissemet(Request $request):Response
+    {
+
+        return $this->modifierEtablissement( -1, $request);
+    }
+
+ }
