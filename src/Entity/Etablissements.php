@@ -135,14 +135,12 @@ class Etablissements
     private $localisation;
 
     /**
-     * @Assert\NotBlank()
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $nature_uai;
 
     /**
-     * @Assert\NotBlank()
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -239,6 +237,7 @@ class Etablissements
     private $code_ministere;
 
     /**
+     * @Assert\NotBlank()
      *
      * @ORM\Column(type="string", nullable=true)
      */

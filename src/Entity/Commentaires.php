@@ -6,6 +6,7 @@ use App\Repository\CommentairesRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CommentairesRepository::class)
@@ -25,11 +26,21 @@ class Commentaires
     private $nom;
 
     /**
+     * @Assert\NotBlank()
+     *
      * @ORM\Column(type="date")
      */
     private $date_creation;
 
     /**
+     * @Assert\NotBlank()
+     *
+     *  @Assert\Range(
+     *      min = 0,
+     *      max = 5,
+     *      notInRangeMessage = "La note doit être entre {{ min }} et {{ max }} étoiles",
+     * )
+     *
      * @ORM\Column(type="integer")
      */
     private $note;
@@ -47,6 +58,13 @@ class Commentaires
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getNom(): ?string

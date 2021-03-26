@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Commentaires;
+use App\Entity\Etablissements;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -16,7 +17,7 @@ class CommentaireType extends AbstractType
             ->add('date_creation')
             ->add('note')
             ->add('texte')
-            ->add('etablissement')
+            //->add('etablissement', EtablissementType::class)
         ;
     }
 
